@@ -7,14 +7,20 @@
 #define CHARGERATE_MAX  0.8
 #define WARNING_TOLERANCE 0.05
 
-enum State {LOW_BREACH = 0, LOW_WARNING, NORMAL, HIGH_WARNING, HIGH_BREACH};
+//enum State {LOW_BREACH = 0, LOW_WARNING, NORMAL, HIGH_WARNING, HIGH_BREACH};
 enum Languages {ENGLISH, GERMAN} language = ENGLISH;
 //enum BatteryState {NOT_OK = -1, OK = 0, WARNING = 1};
-const char* States[] = {"LOW_BREACH", "LOW_WARNING", "NORMAL", "HIGH_WARNING", "HIGH_BREACH"};
+//const char* States[] = {"LOW_BREACH", "LOW_WARNING", "NORMAL", "HIGH_WARNING", "HIGH_BREACH"};
 int checkRange(char* parameter, float value, float min, float max);
 int batteryIsOk(float temperature, float soc, float chargeRate);
+void printMessage(enum Languages lang, char* EngMsz, char* GermanMsz);
 
-enum State TempState, SocState, ChargeRateState;
+//enum State TempState, SocState, ChargeRateState;
+
+void printMessage(enum Languages lang, char* EngMsz, char* GermanMsz)
+{
+  printf("%s", (lang == ENGLISH) ? EngMsz : GermanMsz);
+}
 
 int checkIsWithinLimit(char* parameter, float value, float min, float max)
 {
@@ -68,22 +74,22 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
   result = isTempOk*isSocOk*isChargeRateOk;
   if(result == 0)
   {
-      (language == ENGLISH) ? printf("Overall Battery State: NOT_OK\n"):
-      printf("Gesamtzustand der Batterie: NICHT_OK\n");
+      printMessage(language, "Overall Battery State: NOT_OK\n", "Gesamtzustand der Batterie: NICHT_OK\n");
   }
   else
   {
-      (language == ENGLISH) ? printf("Overall Battery State: OK!!\n"):
-      printf("Gesamtzustand der Batterie: OK\n");
+      printMessage(language, "Overall Battery State: OK\n", "Gesamtzustand der Batterie: OK\n");
   } 
   return result;
 }
 
 int main() {
   /*Checking temperature range*/
+  language = ENGLISH;
   assert(batteryIsOk(TEMP_MIN-1, 70, 0.7)==0);
   assert(batteryIsOk(TEMP_MIN+1, 70, 0.7)==1);
   assert(batteryIsOk(TEMP_MIN+10, 70, 0.7)==1);
+  language = GERMAN;
   assert(batteryIsOk(TEMP_MAX-1, 70, 0.7)==1);
   assert(batteryIsOk(TEMP_MAX+1, 70, 0.7)==0);
 
@@ -91,12 +97,14 @@ int main() {
   assert(batteryIsOk(40, SOC_MIN-1, 0.7)==0);
   assert(batteryIsOk(40, SOC_MIN+1, 0.7)==1);
   assert(batteryIsOk(40, SOC_MIN+10, 0.7)==1);
+  language = ENGLISH;
   assert(batteryIsOk(40, SOC_MAX-1, 0.7)==1);
   assert(batteryIsOk(40, SOC_MAX+1, 0.7)==0);
 
   /*Checking ChargeRate range*/
   assert(batteryIsOk(40, 60, 0)==0);
   assert(batteryIsOk(40, 60, 0.03)==1);
+  language = GERMAN;
   assert(batteryIsOk(40, 60, 0.2)==1);
   assert(batteryIsOk(40, 60, CHARGERATE_MAX-0.03)==1);
   assert(batteryIsOk(40, 60, CHARGERATE_MAX+0.2)==0);
