@@ -38,9 +38,9 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
   int isTempOk = 0;
   int isSocOk = 0;
   int isChargeRateOk = 0;
-  isTempOk       = (temperature, TEMP_MIN, TEMP_MAX);
-  isSocOk        = (soc, SOC_MIN, SOC_MAX);
-  isChargeRateOk = (chargeRate, CHARGERATE_MAX); 
+  isTempOk       = checkWithinRange(temperature, TEMP_MIN, TEMP_MAX);
+  isSocOk        = checkWithinRange(soc, SOC_MIN, SOC_MAX);
+  isChargeRateOk = checkLessThanMax(chargeRate, CHARGERATE_MAX); 
   return (isTempOk && isSocOk && isChargeRateOk);
 }
 
@@ -51,11 +51,11 @@ int main() {
   assert(!batteryIsOk(TEMP_MAX+1, 70, 0.7));
 
   /*Checking SOC range*/
-    assert(!batteryIsOk(50, SOC_MIN-1, 0));
-    assert(batteryIsOk(50, SOC_MIN+1, 0));
-    assert(!batteryIsOk(50, SOC_MAX+1, 0));
+    assert(!batteryIsOk(40, SOC_MIN-1, 0));
+    assert(batteryIsOk(40, SOC_MIN+1, 0));
+    assert(!batteryIsOk(40, SOC_MAX+1, 0));
   
   /*Checking chargeRate range*/
-  assert(batteryIsOk(50, 70, CHARGERATE_MAX-0.1));
-  assert(batteryIsOk(50, 70, CHARGERATE_MAX+0.1));
+  assert(batteryIsOk(40, 70, CHARGERATE_MAX-0.1));
+  assert(!batteryIsOk(40, 70, CHARGERATE_MAX+0.1));
 }
