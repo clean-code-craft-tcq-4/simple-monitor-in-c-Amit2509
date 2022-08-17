@@ -8,68 +8,79 @@
 #define WARNING_TOLERANCE 0.05
 
 enum State {LOW_BREACH = 0, LOW_WARNING, NORMAL, HIGH_WARNING, HIGH_BREACH};
-enum BatteryState {NOT_OK = -1, OK = 0, WARNING = 1};
+//enum BatteryState {NOT_OK = -1, OK = 0, WARNING = 1};
 const char* States[] = {"LOW_BREACH", "LOW_WARNING", "NORMAL", "HIGH_WARNING", "HIGH_BREACH"};
-enum State checkWithinRange(char* parameter, float value, float min, float max);
-enum BatteryState batteryIsOk(float temperature, float soc, float chargeRate);
+int checkRange(char* parameter, float value, float min, float max);
+int batteryIsOk(float temperature, float soc, float chargeRate);
 
 enum State TempState, SocState, ChargeRateState;
 
-enum State checkWithinRange(char* parameter, float value, float min, float max)
+int checkIsWithinLimit(char* parameter, float value, float min, float max)
 {
-  enum State currState = NORMAL;
- /* if (value <= min)
+  int result = 1;
+  if (value <= min)
   {
-    currState = LOW_BREACH;
+    result    = 0;
+    printf ("LOW_%s_BREACH\n", parameter);
   }
-  else if ((value > min) && (value <=(min + max*WARNING_TOLERANCE)))
+  else if (value > max)
   {
-    currState = LOW_WARNING;
-  }*/
-  if ((value >(max - max*WARNING_TOLERANCE)) && (value <= max))
-  {
-    return HIGH_WARNING;
+    result    = 0;
+    printf ("HIGH_%s_BREACH\n", parameter);
   }
-  /*else if (value > max)
-  {
-    return HIGH_BREACH;
-  }*/
-  printf ("%s state: %s\n", parameter, States[currState]);
-  
+  return result;
 }
 
-
-
-enum BatteryState batteryIsOk(float temperature, float soc, float chargeRate) {
-  enum BatteryState batteryState;
-  TempState       = checkWithinRange("Temperature", temperature, TEMP_MIN, TEMP_MAX);
-  SocState        = checkWithinRange("Charge", soc, SOC_MIN, SOC_MAX);
-  ChargeRateState = checkWithinRange("ChargeRate", chargeRate, 0, CHARGERATE_MAX); /*Assuming minimum allowed chargeRate is 0*/
-  
-/*  if((TempState == LOW_BREACH)||(TempState == HIGH_BREACH)||(SocState == LOW_BREACH)||(SocState == HIGH_BREACH)||(ChargeRateState == LOW_BREACH)||(ChargeRateState == HIGH_BREACH))
+void checkWarning(char* parameter, float value, float min, float max)
+{
+  if (value <= (min + max*WARNING_TOLERANCE))
   {
-      batteryState = NOT_OK;
-      printf("Overall Battery State: NOT_OK (At least one parameter is out of its min/max range)\n");
+    printf ("LOW_%s_WARNING\n", parameter);
   }
-  else if((TempState == LOW_WARNING)||(TempState == HIGH_WARNING)||(SocState == LOW_WARNING)||(SocState == HIGH_WARNING)||(ChargeRateState == LOW_WARNING)||(ChargeRateState == HIGH_WARNING))
+  else if (value >(max - max*WARNING_TOLERANCE))
   {
-      batteryState = WARNING;
-      printf("Overall Battery State: WARNING!! (At least one parameter is reaching its min/max limit)\n");
+    printf ("HIGH_%s_WARNING\n", parameter);
   }
   else
-  {*/
-     batteryState = OK;
-     printf("Overall Battery State: OK!! (All the parameters are in normal range)\n");
-  //}
+  {
+    printf ("NORMAL_%s\n", parameter);
+  }
+}
+
+int checkRange(char* parameter, float value, float min, float max)
+{ 
+  int result = checkIsWithinLimit(parameter, value, min, max);
+  if (result == 1)
+  {
+    checkWarning(parameter, value, min, max);
+  } 
+  return result;
+}
+
+int batteryIsOk(float temperature, float soc, float chargeRate) {
+  int result;
+  int isTempOk, isSocOk, isChargeRateOk;
+  isTempOk       = checkRange("TEMPERATURE", temperature, TEMP_MIN, TEMP_MAX);
+  isSocOk        = checkRange("SoC", soc, SOC_MIN, SOC_MAX);
+  isChargeRateOk = checkRange("CHARGERATE", chargeRate, 0, CHARGERATE_MAX); /*Assuming minimum allowed chargeRate is 0*/
   
-  return batteryState;
+  result = isTempOk*isSocOk*isChargeRateOk;
+  if(result == 0)
+  {
+      printf("Overall Battery State: NOT_OK (At least one parameter is out of its min/max range)\n");
+  }
+  else
+  {
+     printf("Overall Battery State: OK!! (All parameters are within the Limit)\n");
+  } 
+  return result;
 }
 
 int main() {
   /*Checking temperature range*/
-  assert(batteryIsOk(TEMP_MIN-1, 70, 0.7)==NOT_OK);
-  assert(batteryIsOk(TEMP_MIN+1, 70, 0.7)==WARNING);
-  assert(batteryIsOk(TEMP_MIN+10, 70, 0.7)==OK);
-  assert(batteryIsOk(TEMP_MAX-1, 70, 0.7)==WARNING);
-  assert(batteryIsOk(TEMP_MAX+1, 70, 0.7)==NOT_OK);
+  assert(batteryIsOk(TEMP_MIN-1, 70, 0.7)==0);
+  assert(batteryIsOk(TEMP_MIN+1, 70, 0.7)==1);
+  assert(batteryIsOk(TEMP_MIN+10, 70, 0.7)==1);
+  assert(batteryIsOk(TEMP_MAX-1, 70, 0.7)==1);
+  assert(batteryIsOk(TEMP_MAX+1, 70, 0.7)==0);
 }
