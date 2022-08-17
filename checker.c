@@ -18,11 +18,11 @@ enum State TempState, SocState, ChargeRateState;
 enum State checkWithinRange(char* parameter, float value, float min, float max)
 {
   enum State currState = NORMAL;
-  if (value <= min)
+ /* if (value <= min)
   {
     currState = LOW_BREACH;
   }
-/*  else if ((value > min) && (value <=(min + max*WARNING_TOLERANCE)))
+  else if ((value > min) && (value <=(min + max*WARNING_TOLERANCE)))
   {
     currState = LOW_WARNING;
   }*/
