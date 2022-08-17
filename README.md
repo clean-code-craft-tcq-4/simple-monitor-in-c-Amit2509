@@ -57,3 +57,9 @@ Shorten the Semantic distance
 - Functional to express relation between input and output
 - Object oriented to encapsulate state with actions
 - Apect oriented to capture repeating aspects
+
+## Extension 1: Early Warning
+Customers need early warnings to take action, in addition to the alarm that you print after the limit is breached. Introduce a ‘warning’ level with a tolerance of 5% of the upper-limit.
+
+## Extension 2: Support a language in addition to English
+Our market has expanded to German-speaking countries! Switch the language of the printed user-messages based on a global variable.
