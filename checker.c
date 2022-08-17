@@ -22,10 +22,10 @@ enum State checkWithinRange(char* parameter, float value, float min, float max)
   {
     currState = LOW_BREACH;
   }
-  else if ((value > min) && (value <=(min + max*WARNING_TOLERANCE)))
+/*  else if ((value > min) && (value <=(min + max*WARNING_TOLERANCE)))
   {
     currState = LOW_WARNING;
-  }
+  }*/
   else if ((value >(max - max*WARNING_TOLERANCE)) && (value <= max))
   {
     currState = HIGH_WARNING;
