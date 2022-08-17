@@ -8,6 +8,7 @@
 #define WARNING_TOLERANCE 0.05
 
 enum State {LOW_BREACH = 0, LOW_WARNING, NORMAL, HIGH_WARNING, HIGH_BREACH};
+enum Languages {ENGLISH, GERMAN} language = ENGLISH;
 //enum BatteryState {NOT_OK = -1, OK = 0, WARNING = 1};
 const char* States[] = {"LOW_BREACH", "LOW_WARNING", "NORMAL", "HIGH_WARNING", "HIGH_BREACH"};
 int checkRange(char* parameter, float value, float min, float max);
@@ -67,11 +68,13 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
   result = isTempOk*isSocOk*isChargeRateOk;
   if(result == 0)
   {
-      printf("Overall Battery State: NOT_OK (At least one parameter is out of its min/max range)\n");
+      (language == ENGLISH) ? printf("Overall Battery State: NOT_OK\n"):
+      printf("Gesamtzustand der Batterie: NICHT_OK\n");
   }
   else
   {
-     printf("Overall Battery State: OK!! (All parameters are within the Limit)\n");
+      (language == ENGLISH) ? printf("Overall Battery State: OK!!\n"):
+      printf("Gesamtzustand der Batterie: OK\n");
   } 
   return result;
 }
