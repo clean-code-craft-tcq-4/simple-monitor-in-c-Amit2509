@@ -28,14 +28,14 @@ enum State checkWithinRange(char* parameter, float value, float min, float max)
   }*/
   if ((value >(max - max*WARNING_TOLERANCE)) && (value <= max))
   {
-    currState = HIGH_WARNING;
+    return HIGH_WARNING;
   }
   else if (value > max)
   {
-    currState = HIGH_BREACH;
+    return HIGH_BREACH;
   }
   printf ("%s state: %s\n", parameter, States[currState]);
-  return currState;
+  
 }
 
 
