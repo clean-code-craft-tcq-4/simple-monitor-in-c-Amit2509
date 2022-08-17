@@ -50,7 +50,7 @@ enum BatteryState batteryIsOk(float temperature, float soc, float chargeRate) {
   SocState        = checkWithinRange("Charge", soc, SOC_MIN, SOC_MAX);
   ChargeRateState = checkWithinRange("ChargeRate", chargeRate, 0, CHARGERATE_MAX); /*Assuming minimum allowed chargeRate is 0*/
   
-  if((TempState == LOW_BREACH)||(TempState == HIGH_BREACH)||(SocState == LOW_BREACH)||(SocState == HIGH_BREACH)||(ChargeRateState == LOW_BREACH)||(ChargeRateState == HIGH_BREACH))
+/*  if((TempState == LOW_BREACH)||(TempState == HIGH_BREACH)||(SocState == LOW_BREACH)||(SocState == HIGH_BREACH)||(ChargeRateState == LOW_BREACH)||(ChargeRateState == HIGH_BREACH))
   {
       batteryState = NOT_OK;
       printf("Overall Battery State: NOT_OK (At least one parameter is out of its min/max range)\n");
@@ -61,10 +61,10 @@ enum BatteryState batteryIsOk(float temperature, float soc, float chargeRate) {
       printf("Overall Battery State: WARNING!! (At least one parameter is reaching its min/max limit)\n");
   }
   else
-  {
+  {*/
      batteryState = OK;
      printf("Overall Battery State: OK!! (All the parameters are in normal range)\n");
-  }
+  //}
   
   return batteryState;
 }
