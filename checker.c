@@ -30,10 +30,10 @@ enum State checkWithinRange(char* parameter, float value, float min, float max)
   {
     return HIGH_WARNING;
   }
-  else if (value > max)
+  /*else if (value > max)
   {
     return HIGH_BREACH;
-  }
+  }*/
   printf ("%s state: %s\n", parameter, States[currState]);
   
 }
